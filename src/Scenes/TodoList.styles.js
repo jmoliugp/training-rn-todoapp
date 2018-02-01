@@ -10,6 +10,14 @@ const todoListStyles = StyleSheet.create({
     fontWeight: 'bold',
     backgroundColor: 'rgba(247,247,247,1.0)',
   },
+  itemView: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingLeft: 10,
+    paddingRight: 20,
+  },
   item: {
     padding: 10,
     fontSize: 18,
