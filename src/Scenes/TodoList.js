@@ -1,6 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { SectionList, Text } from 'react-native';
+import { Navigation } from 'react-native-navigation';
+import BaseComponent from '../Common/BaseComponent';
 import ItemList from './ItemList';
+import NewItem from './NewItem';
+import Colors from '../Helpers/Colors';
 import styles from './TodoList.styles';
 
 const sectionsHeaders = {
@@ -8,19 +12,45 @@ const sectionsHeaders = {
   doneHeader: 'Done',
 };
 
-const prelaodItems = {
+const preloadItems = {
   pendingItems: ['Cofee', 'Fruit'],
   doneItems: ['Monitors', 'Notebooks', 'PCs'],
 };
 
-export default class TodoList extends Component {
+export default class TodoList extends BaseComponent {
+  static navigatorButtons = {
+    rightButtons: [
+      {
+        title: '+',
+        id: 'addItem',
+        buttonColor: Colors.white,
+        buttonFontSize: 30,
+        buttonFontWeight: '600',
+      },
+    ],
+  };
+
   constructor(props) {
     super(props);
-    const pendingItems = this.newItems(prelaodItems.pendingItems, true);
-    const doneItems = this.newItems(prelaodItems.doneItems, false);
+    const pendingItems = this.newItems(preloadItems.pendingItems, true);
+    const doneItems = this.newItems(preloadItems.doneItems, false);
+    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
     this.state = {
       items: pendingItems.concat(doneItems),
     };
+  }
+
+  onNavigatorEvent(event) {
+    if (event.type === 'NavBarButtonPress') {
+      if (event.id === 'addItem') {
+        Navigation.showModal({
+          screen: 'TodoList.NewItem',
+          title: 'New Item',
+          passProps: { handleNewItem: this.handleNewItem },
+          animationType: 'slide-up',
+        });
+      }
+    }
   }
 
   newItems = (items, pending) => {
@@ -30,11 +60,19 @@ export default class TodoList extends Component {
   };
 
   handleSwitch = (title) => {
-    const itemsUpdated = this.state.items.reduce((accumItems, item) => {
+    const itemsUpdated = this.state.items.map((item) => {
       const pending = (item.title === title) ? !item.pending : item.pending;
-      return { title, pending };
+      return { title: item.title, pending };
     });
     this.setState({ items: itemsUpdated });
+  }
+
+  handleNewItem = (title) => {
+    this.setState((prevState) => {
+      const newState = prevState;
+      newState.items.push({ title, pending: true });
+      return newState;
+    });
   }
 
   renderItem = ({ item }) => {
@@ -52,6 +90,14 @@ export default class TodoList extends Component {
       {section.title}
     </Text>
   );
+
+  renderNewItemModal = () => {
+    return (
+      <NewItem
+        handleNewItem={this.handleNewItem}
+      />
+    );
+  }
 
   render() {
     return (
