@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import headerBarStyles from './HeaderBar.styles';
 
-function HeaderBar() {
+const HeaderBar = () => {
   return (
     <View style={headerBarStyles.headerBarView}>
       <View style={headerBarStyles.headerBarTextContainer}>
@@ -12,6 +12,6 @@ function HeaderBar() {
       </View>
     </View>
   );
-}
+};
 
 export default HeaderBar;
