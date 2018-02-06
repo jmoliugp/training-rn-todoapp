@@ -42,10 +42,10 @@ export default class NewItem extends BaseComponent {
         if (this.state.title) {
           this.props.handleNewItem(this.state.title);
         }
-        Navigation.dismissModal({});
+        Navigation.dismissModal();
       }
       if (event.id === 'cancelButton') {
-        Navigation.dismissModal({});
+        Navigation.dismissModal();
       }
     }
   }

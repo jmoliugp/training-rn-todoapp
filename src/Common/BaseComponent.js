@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import Colors from '../Helpers/Colors';
+import { Colors } from '../Helpers';
 
 class BaseComponent extends Component {
   static navigatorStyle = {

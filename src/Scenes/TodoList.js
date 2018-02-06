@@ -1,9 +1,9 @@
 import React from 'react';
 import { SectionList, Text } from 'react-native';
 import { Navigation } from 'react-native-navigation';
+import deepcopy from 'deepcopy';
 import BaseComponent from '../Common/BaseComponent';
 import ItemList from './ItemList';
-import NewItem from './NewItem';
 import Colors from '../Helpers/Colors';
 import styles from './TodoList.styles';
 
@@ -34,13 +34,12 @@ export default class TodoList extends BaseComponent {
     super(props);
     const pendingItems = this.newItems(preloadItems.pendingItems, true);
     const doneItems = this.newItems(preloadItems.doneItems, false);
-    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
     this.state = {
       items: pendingItems.concat(doneItems),
     };
   }
 
-  onNavigatorEvent(event) {
+  onNavigatorEvent = (event) => {
     if (event.type === 'NavBarButtonPress') {
       if (event.id === 'addItem') {
         Navigation.showModal({
@@ -69,7 +68,7 @@ export default class TodoList extends BaseComponent {
 
   handleNewItem = (title) => {
     this.setState((prevState) => {
-      const newState = prevState;
+      const newState = deepcopy(prevState);
       newState.items.push({ title, pending: true });
       return newState;
     });
@@ -90,14 +89,6 @@ export default class TodoList extends BaseComponent {
       {section.title}
     </Text>
   );
-
-  renderNewItemModal = () => {
-    return (
-      <NewItem
-        handleNewItem={this.handleNewItem}
-      />
-    );
-  }
 
   render() {
     return (
