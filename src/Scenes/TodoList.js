@@ -1,8 +1,6 @@
-import React from 'react';
-import { SectionList, Text } from 'react-native';
-import { Navigation } from 'react-native-navigation';
+import React, { Component } from 'react';
+import { Platform, SectionList, Text } from 'react-native';
 import deepcopy from 'deepcopy';
-import BaseComponent from '../Common/BaseComponent';
 import ItemList from './ItemList';
 import Colors from '../Helpers/Colors';
 import styles from './TodoList.styles';
@@ -17,23 +15,39 @@ const preloadItems = {
   doneItems: ['Monitors', 'Notebooks', 'PCs'],
 };
 
-export default class TodoList extends BaseComponent {
+export default class TodoList extends Component {
   static navigatorButtons = {
     rightButtons: [
       {
-        title: '+',
-        id: 'addItem',
-        buttonColor: Colors.white,
-        buttonFontSize: 30,
-        buttonFontWeight: '600',
+        ...Platform.select({
+          ios: {
+            id: 'addItem',
+            systemItem: 'add',
+          },
+          android: {
+            title: '+',
+            id: 'addItem',
+            buttonColor: Colors.white,
+            buttonFontSize: 30,
+            buttonFontWeight: '600',
+          },
+        }),
       },
     ],
   };
+
+  static navigatorStyle = {
+    navBarTextColor: Colors.white,
+    navBarBackgroundColor: Colors.lightBlue,
+    navBarButtonColor: Colors.white,
+  }
 
   constructor(props) {
     super(props);
     const pendingItems = this.newItems(preloadItems.pendingItems, true);
     const doneItems = this.newItems(preloadItems.doneItems, false);
+    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
+    this.props.navigator.setButtons(TodoList.navigatorButtons.navigatorButtons);
     this.state = {
       items: pendingItems.concat(doneItems),
     };
@@ -42,10 +56,12 @@ export default class TodoList extends BaseComponent {
   onNavigatorEvent = (event) => {
     if (event.type === 'NavBarButtonPress') {
       if (event.id === 'addItem') {
-        Navigation.showModal({
+        this.props.navigator.showModal({
           screen: 'TodoList.NewItem',
           title: 'New Item',
-          passProps: { handleNewItem: this.handleNewItem },
+          passProps: {
+            handleNewItem: this.handleNewItem,
+          },
           animationType: 'slide-up',
         });
       }
@@ -74,6 +90,12 @@ export default class TodoList extends BaseComponent {
     });
   }
 
+  renderSectionHeader = ({ section }) => (
+    <Text style={styles.sectionHeader}>
+      {section.title}
+    </Text>
+  );
+
   renderItem = ({ item }) => {
     return (
       <ItemList
@@ -83,12 +105,6 @@ export default class TodoList extends BaseComponent {
       />
     );
   }
-
-  renderSectionHeader = ({ section }) => (
-    <Text style={styles.sectionHeader}>
-      {section.title}
-    </Text>
-  );
 
   render() {
     return (

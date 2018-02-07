@@ -1,7 +1,5 @@
-import React from 'react';
-import { View, Text, TextInput } from 'react-native';
-import { Navigation } from 'react-native-navigation';
-import BaseComponent from '../Common/BaseComponent';
+import React, { Component } from 'react';
+import { Platform, View, Text, TextInput } from 'react-native';
 import Colors from '../Helpers/Colors';
 
 const buttonBaseStyle = {
@@ -10,20 +8,36 @@ const buttonBaseStyle = {
   buttonFontWeight: '600',
 };
 
-export default class NewItem extends BaseComponent {
+export default class NewItem extends Component {
   static navigatorButtons = {
     rightButtons: [
       {
-        title: 'Done',
-        id: 'doneButton',
-        ...buttonBaseStyle,
+        ...Platform.select({
+          ios: {
+            id: 'doneButton',
+            systemItem: 'done',
+          },
+          android: {
+            title: 'Done',
+            id: 'doneButton',
+            ...buttonBaseStyle,
+          },
+        }),
       },
     ],
     leftButtons: [
       {
-        title: 'Cancel',
-        id: 'cancelButton',
-        ...buttonBaseStyle,
+        ...Platform.select({
+          ios: {
+            id: 'cancelButton',
+            systemItem: 'cancel',
+          },
+          android: {
+            title: 'Cancel',
+            id: 'cancelButton',
+            ...buttonBaseStyle,
+          },
+        }),
       },
     ],
   };
@@ -42,10 +56,10 @@ export default class NewItem extends BaseComponent {
         if (this.state.title) {
           this.props.handleNewItem(this.state.title);
         }
-        Navigation.dismissModal();
+        this.props.navigator.dismissModal();
       }
       if (event.id === 'cancelButton') {
-        Navigation.dismissModal();
+        this.props.navigator.dismissModal();
       }
     }
   }
