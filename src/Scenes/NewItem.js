@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Platform, View, Text, TextInput } from 'react-native';
+import { Platform, View, Text, TextInput, Switch } from 'react-native';
+import deepcopy from 'deepcopy';
 import Colors from '../Helpers/Colors';
 
 const buttonBaseStyle = {
@@ -46,16 +47,15 @@ export default class NewItem extends Component {
     super(props);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
     this.props.navigator.setButtons(navButtons);
-    this.state = {
-      title: '',
-    };
+    this.state = (this.props.isEditable) ? deepcopy(this.props.todoItem) : { title: '', pending: true };
   }
+
 
   onNavigatorEvent(event) {
     if (event.type === 'NavBarButtonPress') {
       if (event.id === 'doneButton') {
         if (this.state.title) {
-          this.props.handleNewItem(this.state.title);
+          this.props.handleNewItem(this.state);
         }
         this.props.navigator.dismissModal();
       }
@@ -65,14 +65,36 @@ export default class NewItem extends Component {
     }
   }
 
+  handleNewTitle = (title) => {
+    const newState = deepcopy(this.state);
+    newState.title = title;
+    this.setState(newState);
+  }
+
+  handleNewPending = (pending) => {
+    const newState = deepcopy(this.state);
+    newState.pending = pending;
+    this.setState(newState);
+  }
+
   render() {
     return (
       <View >
         <Text >Enter new Item</Text>
         <TextInput
-          onChangeText={(title) => { this.setState({ title }); }}
+          onChangeText={(title) => { this.handleNewTitle(title); }}
           value={this.state.title}
         />
+        {
+          this.props.isEditable &&
+          <View >
+            <Text >Pending</Text>
+            <Switch
+              onValueChange={(pending) => { this.handleNewPending(pending); }}
+              value={this.state.pending}
+            />
+          </View >
+        }
       </View>
     );
   }

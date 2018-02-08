@@ -7,7 +7,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingLeft: 10,
-    paddingRight: 20,
+    paddingRight: 10,
+  },
+  buttonsView: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   item: {
     padding: 10,

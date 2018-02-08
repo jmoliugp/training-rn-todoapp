@@ -36,7 +36,6 @@ const tabButtons = {
 };
 
 export default class TodoList extends Component {
-
   static navigatorStyle = {
     navBarTextColor: Colors.white,
     navBarBackgroundColor: Colors.lightBlue,
@@ -69,6 +68,19 @@ export default class TodoList extends Component {
     }
   }
 
+  showEditItem = (todoItem) => {
+    this.props.navigator.showModal({
+      screen: 'TodoList.NewItem',
+      title: 'Edit Item',
+      passProps: {
+        todoItem,
+        isEditable: true,
+        handleNewItem: this.handleNewItem,
+      },
+      animationType: 'slide-up',
+    });
+  }
+
   newItems = (items, pending) => {
     return items.map((item) => {
       return { title: item, pending };
@@ -83,11 +95,13 @@ export default class TodoList extends Component {
     this.setState({ items: itemsUpdated });
   }
 
-  handleNewItem = (title) => {
+  handleNewItem = (item) => {
     this.setState((prevState) => {
-      const newState = deepcopy(prevState);
-      newState.items.push({ title, pending: true });
-      return newState;
+      let newItems = deepcopy(prevState).items.filter((i) => {
+        return i.title !== item.title;
+      });
+      newItems.push({ title: item.title, pending: item.pending });
+      this.setState({ items: newItems });
     });
   }
 
@@ -100,9 +114,9 @@ export default class TodoList extends Component {
   renderItem = ({ item }) => {
     return (
       <ItemList
-        title={item.title}
-        pending={item.pending}
-        handleSwitch={this.handleSwitch}
+        todoItem={item}
+        handleSwitch={() => this.handleSwitch(item.title)}
+        showEditItem={() => this.showEditItem(item)}
       />
     );
   }
