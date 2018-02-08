@@ -15,26 +15,27 @@ const preloadItems = {
   doneItems: ['Monitors', 'Notebooks', 'PCs'],
 };
 
+const tabButtons = {
+  rightButtons: [
+    {
+      ...Platform.select({
+        ios: {
+          id: 'addItem',
+          systemItem: 'add',
+        },
+        android: {
+          title: '+',
+          id: 'addItem',
+          buttonColor: Colors.white,
+          buttonFontSize: 30,
+          buttonFontWeight: '600',
+        },
+      }),
+    },
+  ],
+};
+
 export default class TodoList extends Component {
-  static navigatorButtons = {
-    rightButtons: [
-      {
-        ...Platform.select({
-          ios: {
-            id: 'addItem',
-            systemItem: 'add',
-          },
-          android: {
-            title: '+',
-            id: 'addItem',
-            buttonColor: Colors.white,
-            buttonFontSize: 30,
-            buttonFontWeight: '600',
-          },
-        }),
-      },
-    ],
-  };
 
   static navigatorStyle = {
     navBarTextColor: Colors.white,
@@ -47,7 +48,7 @@ export default class TodoList extends Component {
     const pendingItems = this.newItems(preloadItems.pendingItems, true);
     const doneItems = this.newItems(preloadItems.doneItems, false);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
-    this.props.navigator.setButtons(TodoList.navigatorButtons.navigatorButtons);
+    this.props.navigator.setButtons(tabButtons);
     this.state = {
       items: pendingItems.concat(doneItems),
     };

@@ -8,43 +8,44 @@ const buttonBaseStyle = {
   buttonFontWeight: '600',
 };
 
-export default class NewItem extends Component {
-  static navigatorButtons = {
-    rightButtons: [
-      {
-        ...Platform.select({
-          ios: {
-            id: 'doneButton',
-            systemItem: 'done',
-          },
-          android: {
-            title: 'Done',
-            id: 'doneButton',
-            ...buttonBaseStyle,
-          },
-        }),
-      },
-    ],
-    leftButtons: [
-      {
-        ...Platform.select({
-          ios: {
-            id: 'cancelButton',
-            systemItem: 'cancel',
-          },
-          android: {
-            title: 'Cancel',
-            id: 'cancelButton',
-            ...buttonBaseStyle,
-          },
-        }),
-      },
-    ],
-  };
+const navButtons = {
+  rightButtons: [
+    {
+      ...Platform.select({
+        ios: {
+          id: 'doneButton',
+          systemItem: 'done',
+        },
+        android: {
+          title: 'Done',
+          id: 'doneButton',
+          ...buttonBaseStyle,
+        },
+      }),
+    },
+  ],
+  leftButtons: [
+    {
+      ...Platform.select({
+        ios: {
+          id: 'cancelButton',
+          systemItem: 'cancel',
+        },
+        android: {
+          title: 'Cancel',
+          id: 'cancelButton',
+          ...buttonBaseStyle,
+        },
+      }),
+    },
+  ],
+};
 
+export default class NewItem extends Component {
   constructor(props) {
     super(props);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
+    this.props.navigator.setButtons(navButtons);
     this.state = {
       title: '',
     };

@@ -9,8 +9,6 @@ const withNavBar = (WrappedComponent) => {
         navBarButtonColor: Colors.white,
       }
 
-      static navigatorButtons = WrappedComponent.navigatorButtons;
-
       render() {
         return <WrappedComponent {...this.props} />;
       }
