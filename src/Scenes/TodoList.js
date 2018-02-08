@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
+import { observer } from 'mobx-react';
 import { Platform, SectionList, Text } from 'react-native';
+
 import deepcopy from 'deepcopy';
+
+import { TodoStore } from '../Stores';
 import ItemList from './ItemList';
 import Colors from '../Helpers/Colors';
 import styles from './TodoList.styles';
@@ -8,11 +12,6 @@ import styles from './TodoList.styles';
 const sectionsHeaders = {
   pendingHeader: 'Pending',
   doneHeader: 'Done',
-};
-
-const preloadItems = {
-  pendingItems: ['Cofee', 'Fruit'],
-  doneItems: ['Monitors', 'Notebooks', 'PCs'],
 };
 
 const tabButtons = {
@@ -35,6 +34,7 @@ const tabButtons = {
   ],
 };
 
+@observer
 export default class TodoList extends Component {
   static navigatorStyle = {
     navBarTextColor: Colors.white,
@@ -44,14 +44,11 @@ export default class TodoList extends Component {
 
   constructor(props) {
     super(props);
-    const pendingItems = this.newItems(preloadItems.pendingItems, true);
-    const doneItems = this.newItems(preloadItems.doneItems, false);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
     this.props.navigator.setButtons(tabButtons);
-    this.state = {
-      items: pendingItems.concat(doneItems),
-    };
   }
+
+  //Navigation handlers
 
   onNavigatorEvent = (event) => {
     if (event.type === 'NavBarButtonPress') {
@@ -81,29 +78,17 @@ export default class TodoList extends Component {
     });
   }
 
-  newItems = (items, pending) => {
-    return items.map((item) => {
-      return { title: item, pending };
-    });
-  };
+  //Store Handlers
 
-  handleSwitch = (title) => {
-    const itemsUpdated = this.state.items.map((item) => {
-      const pending = (item.title === title) ? !item.pending : item.pending;
-      return { title: item.title, pending };
-    });
-    this.setState({ items: itemsUpdated });
+  handleSwitch = (item) => {
+    TodoStore.editTodo(item);
   }
 
   handleNewItem = (item) => {
-    this.setState((prevState) => {
-      let newItems = deepcopy(prevState).items.filter((i) => {
-        return i.title !== item.title;
-      });
-      newItems.push({ title: item.title, pending: item.pending });
-      this.setState({ items: newItems });
-    });
+    TodoStore.addTodo(item);
   }
+
+  //Render functions
 
   renderSectionHeader = ({ section }) => (
     <Text style={styles.sectionHeader}>
@@ -115,18 +100,21 @@ export default class TodoList extends Component {
     return (
       <ItemList
         todoItem={item}
-        handleSwitch={() => this.handleSwitch(item.title)}
+        handleSwitch={() => this.handleSwitch({ title: item.title, pending: !item.pending })}
         showEditItem={() => this.showEditItem(item)}
       />
     );
   }
 
-  render() {
+  render = () => {
+    const { observableTodoStore } = TodoStore;
+    const pendingTodos = observableTodoStore.pendingItems();
+    const doneItems = observableTodoStore.doneItems();
     return (
       <SectionList
         sections={[
-          { title: sectionsHeaders.pendingHeader, data: this.state.items.filter(item => item.pending === true) },
-          { title: sectionsHeaders.doneHeader, data: this.state.items.filter(item => item.pending === false) },
+          { title: sectionsHeaders.pendingHeader, data: pendingTodos },
+          { title: sectionsHeaders.doneHeader, data: doneItems },
         ]}
         renderItem={this.renderItem}
         renderSectionHeader={this.renderSectionHeader}
