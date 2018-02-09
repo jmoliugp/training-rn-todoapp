@@ -116,7 +116,7 @@ export default class TodoList extends Component {
         ]}
         renderItem={this.renderItem}
         renderSectionHeader={this.renderSectionHeader}
-        keyExtractor={item => item.title}
+        keyExtractor={item => item.id}
       />
     );
   }

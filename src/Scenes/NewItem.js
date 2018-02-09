@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 
 import deepcopy from 'deepcopy';
 
-import { TodoStore } from '../Stores';
+import { TodoStore, genTodoId } from '../Stores';
 import Colors from '../Helpers/Colors';
 
 const buttonBaseStyle = {
@@ -52,7 +52,7 @@ export default class NewItem extends Component {
     super(props);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
     this.props.navigator.setButtons(navButtons);
-    this.state = (this.props.isEditable) ? TodoStore.selectedTodo : { title: '', pending: true };
+    this.state = (this.props.isEditable) ? TodoStore.selectedTodo : { title: '', pending: true, id: genTodoId() };
   }
 
   onNavigatorEvent(event) {

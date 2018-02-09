@@ -3,13 +3,15 @@ import { observable, computed, action } from 'mobx';
 const pendingItems = ['Cofee', 'Fruit'];
 const doneItems = ['Monitors', 'Notebooks', 'PCs'];
 
-const genTodos = (items, pending) => {
+const genTodoId = () => Math.random();
+
+const genTodoList = (items, pending) => {
   return items.map((item) => {
-    return { title: item, pending };
+    return { title: item, pending, id: genTodoId() };
   });
 };
 
-const preloadItems = genTodos(pendingItems, true).concat(genTodos(doneItems, false));
+const preloadItems = genTodoList(pendingItems, true).concat(genTodoList(doneItems, false));
 
 class TodoStore {
   debugger;
@@ -24,19 +26,21 @@ class TodoStore {
   }
 
   @action addTodo = (item) => {
-    if (!this.todos.find(i => i.title === item.title)) {
+    if (!this.todos.find(i => i.id === item.id)) {
       this.todos.push(item);
     }
   }
 
   @action removeTodo = (item) => {
-    this.todos = this.todos.filter(i => i.title !== item.title);
+    this.todos = this.todos.filter(i => i.id !== item.id);
   }
 
   @action editTodo = (item) => {
+    debugger;
     this.todos = this.todos.map((i) => {
-      return (i.title === item.title) ? item : i;
+      return (i.id === item.id) ? item : i;
     });
+    debugger;
   }
 
   @action selectTodo = (item) => {
@@ -48,4 +52,5 @@ class TodoStore {
   }
 }
 
-export default new TodoStore();
+export const Store = new TodoStore();
+export const genId = genTodoId;
