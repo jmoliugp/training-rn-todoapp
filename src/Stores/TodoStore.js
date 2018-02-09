@@ -1,4 +1,4 @@
-import { observable, computed } from 'mobx';
+import { observable, computed, action } from 'mobx';
 
 const pendingItems = ['Cofee', 'Fruit'];
 const doneItems = ['Monitors', 'Notebooks', 'PCs'];
@@ -23,27 +23,27 @@ class TodoStore {
     return this.todos.filter(item => item.pending === false);
   }
 
-  addTodo = (item) => {
+  @action addTodo = (item) => {
     if (!this.todos.find(i => i.title === item.title)) {
       this.todos.push(item);
     }
   }
 
-  removeTodo = (item) => {
+  @action removeTodo = (item) => {
     this.todos = this.todos.filter(i => i.title !== item.title);
   }
 
-  editTodo = (item) => {
+  @action editTodo = (item) => {
     this.todos = this.todos.map((i) => {
       return (i.title === item.title) ? item : i;
     });
   }
 
-  selectTodo = (item) => {
+  @action selectTodo = (item) => {
     this.selectedTodo = item;
   }
 
-  unSelectTodo = () => {
+  @action unSelectTodo = () => {
     this.selectedTodo = null;
   }
 }
