@@ -1,4 +1,4 @@
-import { observable, computed } from 'mobx-react';
+import { observable, computed } from 'mobx';
 
 const pendingItems = ['Cofee', 'Fruit'];
 const doneItems = ['Monitors', 'Notebooks', 'PCs'];
@@ -9,10 +9,11 @@ const genTodos = (items, pending) => {
   });
 };
 
-const preloadItems = genTodos(pendingItems).concat(genTodos(doneItems));
+const preloadItems = genTodos(pendingItems, true).concat(genTodos(doneItems, false));
 
-class ObservableTodoStore {
-  @observable items = preloadItems;
+class TodoStore {
+  debugger;
+  @observable todos = preloadItems;
 
   @computed get pendingItems() {
     return this.todos.filter(item => item.pending !== false);
@@ -22,7 +23,9 @@ class ObservableTodoStore {
   }
 
   addTodo = (item) => {
-    this.todos.push(item);
+    if (!this.todos.find(i => i.title === item.title)) {
+      this.todos.push(item);
+    }
   }
 
   removeTodo = (item) => {
@@ -30,9 +33,10 @@ class ObservableTodoStore {
   }
 
   editTodo = (item) => {
-    this.removeTodo(item);
-    this.addTodo(item);
+    this.todos = this.todos.map((i) => {
+      return (i.title === item.title) ? item : i;
+    });
   }
 }
 
-const observableTodoStore = new ObservableTodoStore();
+export default new TodoStore();

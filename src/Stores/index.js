@@ -1,3 +1,3 @@
-import TodoStore from './TodoStore';
+import Store from './TodoStore';
 
-export { TodoStore };
+export const TodoStore = Store;

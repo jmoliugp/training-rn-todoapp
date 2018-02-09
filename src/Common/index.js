@@ -1,3 +1,3 @@
-import HocNavBar from './HocNavBar';
+import hocNavBar from './HocNavBar';
 
-export { HocNavBar };
+export const HocNavBar = hocNavBar;

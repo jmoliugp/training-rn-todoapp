@@ -107,9 +107,8 @@ export default class TodoList extends Component {
   }
 
   render = () => {
-    const { observableTodoStore } = TodoStore;
-    const pendingTodos = observableTodoStore.pendingItems();
-    const doneItems = observableTodoStore.doneItems();
+    const pendingTodos = TodoStore.pendingItems;
+    const doneItems = TodoStore.doneItems;
     return (
       <SectionList
         sections={[
