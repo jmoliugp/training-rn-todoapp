@@ -97,7 +97,11 @@ export default class TodoList extends Component {
     return (
       <ItemList
         todoItem={item}
-        handleSwitch={() => this.handleSwitch({ title: item.title, pending: !item.pending })}
+        handleSwitch={() => {
+          const newItem = Object.assign({}, item);
+          newItem.pending = !item.pending;
+          this.handleSwitch(newItem);
+        }}
         showEditItem={() => {
           TodoStore.selectTodo(item);
           this.showEditItem(item);
