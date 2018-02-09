@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { Platform, SectionList, Text } from 'react-native';
 
-import deepcopy from 'deepcopy';
-
 import { TodoStore } from '../Stores';
 import ItemList from './ItemList';
 import Colors from '../Helpers/Colors';
@@ -65,12 +63,11 @@ export default class TodoList extends Component {
     }
   }
 
-  showEditItem = (todoItem) => {
+  showEditItem = () => {
     this.props.navigator.showModal({
       screen: 'TodoList.NewItem',
       title: 'Edit Item',
       passProps: {
-        todoItem,
         isEditable: true,
         handleNewItem: this.handleNewItem,
       },
@@ -101,14 +98,16 @@ export default class TodoList extends Component {
       <ItemList
         todoItem={item}
         handleSwitch={() => this.handleSwitch({ title: item.title, pending: !item.pending })}
-        showEditItem={() => this.showEditItem(item)}
+        showEditItem={() => {
+          TodoStore.selectTodo(item);
+          this.showEditItem(item);
+        }}
       />
     );
   }
 
   render = () => {
-    const pendingTodos = TodoStore.pendingItems;
-    const doneItems = TodoStore.doneItems;
+    const [pendingTodos, doneItems] = [TodoStore.pendingItems, TodoStore.doneItems];
     return (
       <SectionList
         sections={[

@@ -14,6 +14,7 @@ const preloadItems = genTodos(pendingItems, true).concat(genTodos(doneItems, fal
 class TodoStore {
   debugger;
   @observable todos = preloadItems;
+  @observable selectedTodo = null;
 
   @computed get pendingItems() {
     return this.todos.filter(item => item.pending !== false);
@@ -36,6 +37,14 @@ class TodoStore {
     this.todos = this.todos.map((i) => {
       return (i.title === item.title) ? item : i;
     });
+  }
+
+  selectTodo = (item) => {
+    this.selectedTodo = item;
+  }
+
+  unSelectTodo = () => {
+    this.selectedTodo = null;
   }
 }
 
