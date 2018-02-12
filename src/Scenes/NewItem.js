@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Platform, View, Text, TextInput, Switch } from 'react-native';
 import { observer } from 'mobx-react';
+import { toJS } from 'mobx';
 
 import deepcopy from 'deepcopy';
 
@@ -52,34 +53,31 @@ export default class NewItem extends Component {
     super(props);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
     this.props.navigator.setButtons(navButtons);
-    this.state = (this.props.isEditable) ? TodoStore.selectedTodo : { title: '', pending: true, id: genTodoId() };
+    this.state = toJS(TodoStore.selectedTodo) || { title: null, pending: true, id: genTodoId() };
   }
 
   onNavigatorEvent(event) {
     if (event.type === 'NavBarButtonPress') {
       if (event.id === 'doneButton') {
         if (this.state.title) {
-          (this.props.isEditable) ? TodoStore.editTodo(this.state) : TodoStore.addTodo(this.state);
-          TodoStore.unSelectTodo();
+          (TodoStore.selectedTodo) ? TodoStore.editTodo(this.state) : TodoStore.addTodo(this.state);
         }
+        TodoStore.unSelectTodo();
         this.props.navigator.dismissModal();
       }
       if (event.id === 'cancelButton') {
+        TodoStore.unSelectTodo();
         this.props.navigator.dismissModal();
       }
     }
   }
 
   handleNewTitle = (title) => {
-    const newState = deepcopy(this.state);
-    newState.title = title;
-    this.setState(newState);
+    this.setState({ ...this.state, title });
   }
 
   handleNewPending = (pending) => {
-    const newState = deepcopy(this.state);
-    newState.pending = pending;
-    this.setState(newState);
+    this.setState({ ...this.state, pending });
   }
 
   render() {
@@ -91,7 +89,7 @@ export default class NewItem extends Component {
           value={this.state.title}
         />
         {
-          this.props.isEditable &&
+          TodoStore.selectedTodo &&
           <View >
             <Text >Pending</Text>
             <Switch

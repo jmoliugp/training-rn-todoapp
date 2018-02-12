@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text, View, Button } from 'react-native';
 
-import { TodoStore } from '../Stores';
 import styles from './ItemList.styles';
 
 const ItemList = (props) => {
@@ -12,9 +11,9 @@ const ItemList = (props) => {
         <Button
           onPress={() => props.showEditItem()}
           title="Edit"
-          color="#841584"
         />
         <Button
+          style={styles.editButton}
           onPress={() => props.handleSwitch()}
           title="X"
           color={(props.todoItem.pending) ? 'green' : 'red'}

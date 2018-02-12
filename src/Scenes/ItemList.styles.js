@@ -17,6 +17,9 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
+  editButton: {
+    color: '#841584',
+  },
   item: {
     padding: 10,
     fontSize: 18,

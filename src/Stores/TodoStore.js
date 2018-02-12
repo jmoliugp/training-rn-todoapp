@@ -3,18 +3,17 @@ import { observable, computed, action } from 'mobx';
 const pendingItems = ['Cofee', 'Fruit'];
 const doneItems = ['Monitors', 'Notebooks', 'PCs'];
 
-const genTodoId = () => Math.random();
+const generateTodoId = () => Math.random();
 
 const genTodoList = (items, pending) => {
   return items.map((item) => {
-    return { title: item, pending, id: genTodoId() };
+    return { title: item, pending, id: generateTodoId() };
   });
 };
 
 const preloadItems = genTodoList(pendingItems, true).concat(genTodoList(doneItems, false));
 
 class TodoStore {
-  debugger;
   @observable todos = preloadItems;
   @observable selectedTodo = null;
 
@@ -36,11 +35,7 @@ class TodoStore {
   }
 
   @action editTodo = (item) => {
-    debugger;
-    this.todos = this.todos.map((i) => {
-      return (i.id === item.id) ? item : i;
-    });
-    debugger;
+    this.todos = this.todos.map(i => (i.id === item.id) ? item : i);
   }
 
   @action selectTodo = (item) => {
@@ -53,4 +48,4 @@ class TodoStore {
 }
 
 export const Store = new TodoStore();
-export const genId = genTodoId;
+export const genId = generateTodoId;

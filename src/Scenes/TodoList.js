@@ -55,7 +55,6 @@ export default class TodoList extends Component {
           screen: 'TodoList.NewItem',
           title: 'New Item',
           passProps: {
-            handleNewItem: this.handleNewItem,
           },
           animationType: 'slide-up',
         });
@@ -67,10 +66,7 @@ export default class TodoList extends Component {
     this.props.navigator.showModal({
       screen: 'TodoList.NewItem',
       title: 'Edit Item',
-      passProps: {
-        isEditable: true,
-        handleNewItem: this.handleNewItem,
-      },
+      passProps: {},
       animationType: 'slide-up',
     });
   }
@@ -79,10 +75,6 @@ export default class TodoList extends Component {
 
   handleSwitch = (item) => {
     TodoStore.editTodo(item);
-  }
-
-  handleNewItem = (item) => {
-    TodoStore.addTodo(item);
   }
 
   //Render functions
@@ -98,7 +90,7 @@ export default class TodoList extends Component {
       <ItemList
         todoItem={item}
         handleSwitch={() => {
-          const newItem = Object.assign({}, item);
+          const newItem = { ...item };
           newItem.pending = !item.pending;
           this.handleSwitch(newItem);
         }}
