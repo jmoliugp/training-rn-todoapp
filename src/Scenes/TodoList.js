@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { observer } from 'mobx-react';
 import { Platform, SectionList, Text } from 'react-native';
-import deepcopy from 'deepcopy';
+
+import { TodoStore } from '../Stores';
 import ItemList from './ItemList';
 import Colors from '../Helpers/Colors';
 import styles from './TodoList.styles';
@@ -8,11 +10,6 @@ import styles from './TodoList.styles';
 const sectionsHeaders = {
   pendingHeader: 'Pending',
   doneHeader: 'Done',
-};
-
-const preloadItems = {
-  pendingItems: ['Cofee', 'Fruit'],
-  doneItems: ['Monitors', 'Notebooks', 'PCs'],
 };
 
 const tabButtons = {
@@ -35,8 +32,8 @@ const tabButtons = {
   ],
 };
 
+@observer
 export default class TodoList extends Component {
-
   static navigatorStyle = {
     navBarTextColor: Colors.white,
     navBarBackgroundColor: Colors.lightBlue,
@@ -45,14 +42,11 @@ export default class TodoList extends Component {
 
   constructor(props) {
     super(props);
-    const pendingItems = this.newItems(preloadItems.pendingItems, true);
-    const doneItems = this.newItems(preloadItems.doneItems, false);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
     this.props.navigator.setButtons(tabButtons);
-    this.state = {
-      items: pendingItems.concat(doneItems),
-    };
   }
+
+  //Navigation handlers
 
   onNavigatorEvent = (event) => {
     if (event.type === 'NavBarButtonPress') {
@@ -61,7 +55,6 @@ export default class TodoList extends Component {
           screen: 'TodoList.NewItem',
           title: 'New Item',
           passProps: {
-            handleNewItem: this.handleNewItem,
           },
           animationType: 'slide-up',
         });
@@ -69,27 +62,22 @@ export default class TodoList extends Component {
     }
   }
 
-  newItems = (items, pending) => {
-    return items.map((item) => {
-      return { title: item, pending };
-    });
-  };
-
-  handleSwitch = (title) => {
-    const itemsUpdated = this.state.items.map((item) => {
-      const pending = (item.title === title) ? !item.pending : item.pending;
-      return { title: item.title, pending };
-    });
-    this.setState({ items: itemsUpdated });
-  }
-
-  handleNewItem = (title) => {
-    this.setState((prevState) => {
-      const newState = deepcopy(prevState);
-      newState.items.push({ title, pending: true });
-      return newState;
+  showEditItem = () => {
+    this.props.navigator.showModal({
+      screen: 'TodoList.NewItem',
+      title: 'Edit Item',
+      passProps: {},
+      animationType: 'slide-up',
     });
   }
+
+  //Store Handlers
+
+  handleSwitch = (item) => {
+    TodoStore.editTodo(item);
+  }
+
+  //Render functions
 
   renderSectionHeader = ({ section }) => (
     <Text style={styles.sectionHeader}>
@@ -100,23 +88,31 @@ export default class TodoList extends Component {
   renderItem = ({ item }) => {
     return (
       <ItemList
-        title={item.title}
-        pending={item.pending}
-        handleSwitch={this.handleSwitch}
+        todoItem={item}
+        handleSwitch={() => {
+          const newItem = { ...item };
+          newItem.pending = !item.pending;
+          this.handleSwitch(newItem);
+        }}
+        showEditItem={() => {
+          TodoStore.selectTodo(item);
+          this.showEditItem(item);
+        }}
       />
     );
   }
 
-  render() {
+  render = () => {
+    const [pendingTodos, doneItems] = [TodoStore.pendingItems, TodoStore.doneItems];
     return (
       <SectionList
         sections={[
-          { title: sectionsHeaders.pendingHeader, data: this.state.items.filter(item => item.pending === true) },
-          { title: sectionsHeaders.doneHeader, data: this.state.items.filter(item => item.pending === false) },
+          { title: sectionsHeaders.pendingHeader, data: pendingTodos },
+          { title: sectionsHeaders.doneHeader, data: doneItems },
         ]}
         renderItem={this.renderItem}
         renderSectionHeader={this.renderSectionHeader}
-        keyExtractor={item => item.title}
+        keyExtractor={item => item.id}
       />
     );
   }

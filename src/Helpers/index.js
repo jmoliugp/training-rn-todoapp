@@ -1,3 +1,3 @@
-import Colors from './Colors';
+import colors from './Colors';
 
-export { Colors };
+export const Colors = colors;
