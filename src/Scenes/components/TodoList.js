@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
 import { Platform, SectionList, Text } from 'react-native';
 
-import { TodoStore } from '../Stores';
 import ItemList from './ItemList';
 import Colors from '../Helpers/Colors';
 import styles from './TodoList.styles';
@@ -32,7 +30,6 @@ const tabButtons = {
   ],
 };
 
-@observer
 export default class TodoList extends Component {
   static navigatorStyle = {
     navBarTextColor: Colors.white,
