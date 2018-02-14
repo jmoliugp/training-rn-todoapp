@@ -1,6 +1,6 @@
 import actionTypes from '../actions/actionTypes';
 
-const selectedTodo = (state = {}, action) => {
+const selectedTodo = (state = null, action) => {
   switch (action.type) {
     case actionTypes.SELECT_TODO:
       return action.todo;

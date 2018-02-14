@@ -14,16 +14,10 @@ const genTodoList = (items, pending) => {
 const preloadItems = genTodoList(pendingItems, true).concat(genTodoList(doneItems, false));
 
 const todos = (state = preloadItems, action) => {
+  debugger;
   switch (action.type) {
     case actionTypes.ADD_TODO:
-      return [
-        ...state,
-        {
-          id: action.id,
-          title: action.title,
-          pending: action.pending,
-        },
-      ];
+      return state.concat([action.todo]);
     case actionTypes.EDIT_TODO:
       return state.map((todo) => {
         return (todo.id === action.todo.id) ? action.todo.id : todo;

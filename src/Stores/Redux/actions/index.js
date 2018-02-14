@@ -3,9 +3,10 @@ import types from './actionTypes';
 let nextTodoId = 0;
 
 export const addTodo = (title) => {
-  nextTodoId += 1;
+  nextTodoId = Math.random();
+  debugger;
   return {
-    type: types.addTodo,
+    type: types.ADD_TODO,
     todo: {
       id: nextTodoId,
       title,
@@ -14,23 +15,24 @@ export const addTodo = (title) => {
   };
 };
 
-export const editTodo = (id) => {
+export const editTodo = (todo) => {
+  debugger;
   return {
-    type: types.editTodo,
-    id,
+    type: types.EDIT_TODO,
+    todo,
   };
 };
 
 export const selectTodo = (todo) => {
   return {
-    type: types.selectedTodo,
+    type: types.SELECT_TODO,
     todo,
   };
 };
 
-export const unSelectTodo = () => {
+export const unselectTodo = () => {
   return {
-    type: types.unSelectTodo,
+    type: types.UNSELECT_TODO,
   };
 };
 

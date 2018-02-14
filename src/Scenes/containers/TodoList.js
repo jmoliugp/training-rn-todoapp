@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Platform, SectionList, Text } from 'react-native';
+import { connect } from 'react-redux';
 
-import ItemList from './ItemList';
-import Colors from '../Helpers/Colors';
-import styles from './TodoList.styles';
+import { selectTodo, editTodo } from '../../Stores/Redux/actions/index';
+import ItemList from '../presentations/ItemList';
+import Colors from '../../Helpers/Colors';
+import styles from '../styles/TodoList.styles';
 
 const sectionsHeaders = {
   pendingHeader: 'Pending',
@@ -30,7 +32,7 @@ const tabButtons = {
   ],
 };
 
-export default class TodoList extends Component {
+class TodoList extends Component {
   static navigatorStyle = {
     navBarTextColor: Colors.white,
     navBarBackgroundColor: Colors.lightBlue,
@@ -70,8 +72,8 @@ export default class TodoList extends Component {
 
   //Store Handlers
 
-  handleSwitch = (item) => {
-    TodoStore.editTodo(item);
+  handleSwitch = (todo) => {
+    this.props.editTodo(todo);
   }
 
   //Render functions
@@ -92,7 +94,7 @@ export default class TodoList extends Component {
           this.handleSwitch(newItem);
         }}
         showEditItem={() => {
-          TodoStore.selectTodo(item);
+          this.props.selectTodo(item);
           this.showEditItem(item);
         }}
       />
@@ -100,11 +102,11 @@ export default class TodoList extends Component {
   }
 
   render = () => {
-    const [pendingTodos, doneItems] = [TodoStore.pendingItems, TodoStore.doneItems];
+    const { pendingItems, doneItems } = this.props;
     return (
       <SectionList
         sections={[
-          { title: sectionsHeaders.pendingHeader, data: pendingTodos },
+          { title: sectionsHeaders.pendingHeader, data: pendingItems },
           { title: sectionsHeaders.doneHeader, data: doneItems },
         ]}
         renderItem={this.renderItem}
@@ -114,3 +116,25 @@ export default class TodoList extends Component {
     );
   }
 }
+
+const getPendingItems = todos => todos.filter(item => item.pending !== false);
+const getDoneItems = todos => todos.filter(item => item.pending === false);
+
+const mapStateToProps = (state) => {
+  return {
+    pendingItems: getPendingItems(state.todos),
+    doneItems: getDoneItems(state.todos),
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    editTodo: todo => dispatch(editTodo(todo)),
+    selectTodo: todo => dispatch(selectTodo(todo)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(TodoList);

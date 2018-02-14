@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import { Platform, View, Text, TextInput, Switch } from 'react-native';
-import { observer } from 'mobx-react';
-import { toJS } from 'mobx';
+import { connect } from 'react-redux';
 
-import deepcopy from 'deepcopy';
-
-import { TodoStore, genTodoId } from '../Stores';
-import Colors from '../Helpers/Colors';
+import { addTodo, editTodo, unselectTodo } from '../../Stores/Redux/actions/index';
+import Colors from '../../Helpers/Colors';
 
 const buttonBaseStyle = {
   buttonColor: Colors.white,
@@ -47,37 +44,38 @@ const navButtons = {
   ],
 };
 
-@observer
-export default class NewItem extends Component {
+class NewItem extends Component {
   constructor(props) {
     super(props);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
     this.props.navigator.setButtons(navButtons);
-    this.state = toJS(TodoStore.selectedTodo) || { title: null, pending: true, id: genTodoId() };
+    this.state = {
+      todo: this.props.selectedTodo || { title: null },
+    };
   }
 
   onNavigatorEvent(event) {
     if (event.type === 'NavBarButtonPress') {
       if (event.id === 'doneButton') {
-        if (this.state.title) {
-          (TodoStore.selectedTodo) ? TodoStore.editTodo(this.state) : TodoStore.addTodo(this.state);
+        if (this.state.todo.title) {
+          (this.props.selectedTodo) ? this.props.editTodo(this.state.todo) : this.props.addTodo(this.state.todo.title);
         }
-        TodoStore.unSelectTodo();
+        this.props.unselectTodo();
         this.props.navigator.dismissModal();
       }
       if (event.id === 'cancelButton') {
-        TodoStore.unSelectTodo();
+        this.props.unselectTodo();
         this.props.navigator.dismissModal();
       }
     }
   }
 
   handleNewTitle = (title) => {
-    this.setState({ ...this.state, title });
+    this.setState({ todo: { ...this.state.todo, title } });
   }
 
   handleNewPending = (pending) => {
-    this.setState({ ...this.state, pending });
+    this.setState({ todo: { ...this.state.todo, pending } });
   }
 
   render() {
@@ -86,15 +84,16 @@ export default class NewItem extends Component {
         <Text >Enter new Item</Text>
         <TextInput
           onChangeText={(title) => { this.handleNewTitle(title); }}
-          value={this.state.title}
+          placeholder="Title"
+          value={this.state.todo.title}
         />
         {
-          TodoStore.selectedTodo &&
+          this.props.selectedTodo &&
           <View >
             <Text >Pending</Text>
             <Switch
               onValueChange={(pending) => { this.handleNewPending(pending); }}
-              value={this.state.pending}
+              value={this.state.todo.pending}
             />
           </View >
         }
@@ -102,3 +101,22 @@ export default class NewItem extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    selectedTodo: state.selectedTodo,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addTodo: title => dispatch(addTodo(title)),
+    editTodo: todo => dispatch(editTodo(todo)),
+    unselectTodo: () => dispatch(unselectTodo()),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(NewItem);

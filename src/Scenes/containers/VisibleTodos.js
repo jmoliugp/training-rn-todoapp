@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
-import { toggleTodo } from '../../Stores/Redux/actions/index';
-import TodoList from '../components/TodoList';
+import { addTodo, editTodo } from '../../Stores/Redux/actions/index';
+import TodoList from '../components';
 
 const pendingItems = todos => todos.filter(item => item.pending !== false);
 const doneItems = todos => todos.filter(item => item.pending === false);
@@ -12,17 +12,16 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    onTodoClick: id => {
-      dispatch(toggleTodo(id))
-    }
-  }
-}
+    addTodo: title => dispatch(addTodo(title)),
+    editTodo: todo => dispatch(editTodo(todo)),
+  };
+};
 
 const VisibleTodoList = connect(
   mapStateToProps,
-  mapDispatchToProps
-)(TodoList)
+  mapDispatchToProps,
+)(TodoList);
 
-export default VisibleTodoList
+export default VisibleTodoList;
