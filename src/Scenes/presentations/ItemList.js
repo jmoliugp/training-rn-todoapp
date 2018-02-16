@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, Button } from 'react-native';
 
-import styles from './ItemList.styles';
+import styles from '../styles/ItemList.styles';
 
 const ItemList = (props) => {
   return (
