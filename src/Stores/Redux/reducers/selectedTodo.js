@@ -5,7 +5,7 @@ const selectedTodo = (state = null, action) => {
     case actionTypes.SELECT_TODO:
       return action.todo;
     case actionTypes.UNSELECT_TODO:
-      return {};
+      return null;
     default:
       return state;
   }

@@ -5,13 +5,13 @@ const doneItems = ['Monitors', 'Notebooks', 'PCs'];
 
 const generateTodoId = () => Math.random();
 
-const genTodoList = (items, pending) => {
+const generateTodoList = (items, pending) => {
   return items.map((item) => {
     return { title: item, pending, id: generateTodoId() };
   });
 };
 
-const preloadItems = genTodoList(pendingItems, true).concat(genTodoList(doneItems, false));
+const preloadItems = generateTodoList(pendingItems, true).concat(generateTodoList(doneItems, false));
 
 const todos = (state = preloadItems, action) => {
   switch (action.type) {
