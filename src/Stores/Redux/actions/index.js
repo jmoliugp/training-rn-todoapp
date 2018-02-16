@@ -4,7 +4,6 @@ let nextTodoId = 0;
 
 export const addTodo = (title) => {
   nextTodoId = Math.random();
-  debugger;
   return {
     type: types.ADD_TODO,
     todo: {
@@ -16,7 +15,6 @@ export const addTodo = (title) => {
 };
 
 export const editTodo = (todo) => {
-  debugger;
   return {
     type: types.EDIT_TODO,
     todo,
