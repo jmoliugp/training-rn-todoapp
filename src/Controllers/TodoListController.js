@@ -1,6 +1,6 @@
 import { todosFetchDataSuccess, todosIsLoading, todosHasErrored } from '../Stores/Redux/actions/index';
 
-export const todosFetchSoloData = (url) => {
+const todosFetchSoloData = (url) => {
   console.log('ENTRO');
   return (dispatch) => {
     dispatch(todosIsLoading(true));
@@ -20,14 +20,6 @@ export const todosFetchSoloData = (url) => {
   };
 };
 
-export const errorAfterFiveSeconds = () => {
-  return (dispatch) => {
-    setTimeout(() => {
-      dispatch(todosHasErrored(true));
-    }, 5000);
-  };
-};
-
 const getStarships = (json) => {
   return json.results.map((starship) => {
     return {
@@ -37,3 +29,5 @@ const getStarships = (json) => {
     };
   });
 };
+
+export default todosFetchSoloData;

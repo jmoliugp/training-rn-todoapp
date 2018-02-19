@@ -1,18 +1,5 @@
 import actionTypes from '../actions/actionTypes';
 
-const pendingItems = ['Cofee', 'Fruit'];
-const doneItems = ['Monitors', 'Notebooks', 'PCs'];
-
-const generateTodoId = () => Math.random();
-
-const generateTodoList = (items, pending) => {
-  return items.map((item) => {
-    return { title: item, pending, id: generateTodoId() };
-  });
-};
-
-const preloadItems = generateTodoList(pendingItems, true).concat(generateTodoList(doneItems, false));
-
 export const todos = (state = [], action) => {
   switch (action.type) {
     case actionTypes.ADD_TODO:
