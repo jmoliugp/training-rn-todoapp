@@ -1,15 +1,17 @@
 import { Navigation } from 'react-native-navigation';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import devToolsEnhancer from 'remote-redux-devtools';
 
-import todoApp from './Stores/Redux/reducers';
+import rootReducer from './Stores/Redux/reducers';
 
 import registerScreens from './Scenes/Screens';
 
-let store = createStore(
-  todoApp,
-  devToolsEnhancer(),
+const store = createStore(
+  rootReducer,
+  applyMiddleware(thunk),
+  // devToolsEnhancer(),
 );
 
 const startApp = () => {

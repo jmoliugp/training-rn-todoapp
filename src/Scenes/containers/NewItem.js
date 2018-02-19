@@ -50,7 +50,7 @@ class NewItem extends Component {
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
     this.props.navigator.setButtons(navButtons);
     this.state = {
-      todo: this.props.selectedTodo || { title: null },
+      todo: { ...this.props.selectedTodo } || { title: null },
     };
   }
 

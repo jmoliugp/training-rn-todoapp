@@ -34,4 +34,25 @@ export const unselectTodo = () => {
   };
 };
 
+export const todosHasErrored = (bool) => {
+  return {
+    type: types.TODOS_HAS_ERRORED,
+    hasErrored: bool,
+  };
+};
+
+export const todosIsLoading = (bool) => {
+  return {
+    type: types.TODOS_IS_LOADING,
+    isLoading: bool,
+  };
+};
+
+export const todosFetchDataSuccess = (todos) => {
+  return {
+    type: types.TODOS_FETCH_DATA_SUCCESS,
+    todos,
+  };
+};
+
 export const actionTypes = types;

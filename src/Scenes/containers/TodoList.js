@@ -3,6 +3,7 @@ import { Platform, SectionList, Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { selectTodo, editTodo } from '../../Stores/Redux/actions/index';
+import { todosFetchSoloData, errorAfterFiveSeconds } from '../../Controllers/TodoListController';
 import ItemList from '../presentations/ItemList';
 import Colors from '../../Helpers/Colors';
 import styles from '../styles/TodoList.styles';
@@ -43,6 +44,10 @@ class TodoList extends Component {
     super(props);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
     this.props.navigator.setButtons(tabButtons);
+  }
+
+  componentDidMount() {
+    this.props.fetchData('https://swapi.co/api/starships');
   }
 
   //Navigation handlers
@@ -101,6 +106,7 @@ class TodoList extends Component {
     );
   }
 
+
   render = () => {
     const { pendingItems, doneItems } = this.props;
     return (
@@ -129,6 +135,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    fetchData: url => dispatch(todosFetchSoloData(url)),
     editTodo: todo => dispatch(editTodo(todo)),
     selectTodo: todo => dispatch(selectTodo(todo)),
   };
