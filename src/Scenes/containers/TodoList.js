@@ -3,7 +3,7 @@ import { Platform, SectionList, Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { selectTodo, editTodo } from '../../Stores/Redux/actions/index';
-import { todosFetchSoloData } from '../../Controllers/TodoListController';
+import todosFetchSoloData from '../../Controllers/TodoListController';
 import { CustomActivityIndicator } from '../../Common';
 import ItemList from '../presentations/ItemList';
 import Colors from '../../Helpers/Colors';
