@@ -1,7 +1,6 @@
 import { todosFetchDataSuccess, todosIsLoading, todosHasErrored } from '../Stores/Redux/actions/index';
 
 const todosFetchSoloData = (url) => {
-  console.log('ENTRO');
   return (dispatch) => {
     dispatch(todosIsLoading(true));
     fetch(url)
