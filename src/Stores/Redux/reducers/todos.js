@@ -1,6 +1,6 @@
 import actionTypes from '../actions/actionTypes';
 
-export const todos = (state = [], action) => {
+const todosUpdateList = (state = [], action) => {
   switch (action.type) {
     case actionTypes.ADD_TODO:
       return state.concat([action.todo]);
@@ -15,20 +15,4 @@ export const todos = (state = [], action) => {
   }
 };
 
-export const todosHasErrored = (state = false, action) => {
-  switch (action.type) {
-    case actionTypes.TODOS_HAS_ERRORED:
-      return action.hasErrored;
-    default:
-      return state;
-  }
-};
-
-export const todosIsLoading = (state = false, action) => {
-  switch (action.type) {
-    case actionTypes.TODOS_IS_LOADING:
-      return action.isLoading;
-    default:
-      return state;
-  }
-};
+export default todosUpdateList;

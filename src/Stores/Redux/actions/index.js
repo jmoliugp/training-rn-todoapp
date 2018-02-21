@@ -1,9 +1,8 @@
 import types from './actionTypes';
-
-let nextTodoId = 0;
+import { todosLoadingStates } from '../../../Helpers/Enums';
 
 export const addTodo = (title) => {
-  nextTodoId = Math.random();
+  const nextTodoId = Math.random();
   return {
     type: types.ADD_TODO,
     todo: {
@@ -28,24 +27,31 @@ export const selectTodo = (todo) => {
   };
 };
 
+
 export const unselectTodo = () => {
   return {
     type: types.UNSELECT_TODO,
   };
 };
 
-export const todosHasErrored = (bool) => {
-  return {
-    type: types.TODOS_HAS_ERRORED,
-    hasErrored: bool,
-  };
-};
-
-export const todosIsLoading = (bool) => {
-  return {
-    type: types.TODOS_IS_LOADING,
-    isLoading: bool,
-  };
+export const todosLoadingStatus = (loadingStatus) => {
+  switch (loadingStatus) {
+    case todosLoadingStates.SUCCESFUL:
+      return {
+        type: types.TODOS_IS_LOADED,
+        loadingStatus: todosLoadingStates.SUCCESFUL,
+      };
+    case todosLoadingStates.IN_PROGRESS:
+      return {
+        type: types.TODOS_IS_LOADING,
+        loadingStatus: todosLoadingStates.IN_PROGRESS,
+      };
+    default:
+      return {
+        type: types.TODOS_HAS_FAILED,
+        loadingStatus: todosLoadingStates.SUCCESFUL,
+      };
+  }
 };
 
 export const todosFetchDataSuccess = (todos) => {

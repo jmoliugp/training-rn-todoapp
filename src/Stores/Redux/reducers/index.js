@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
 
-import { todos, todosIsLoading, todosHasErrored } from './todos';
+import todos from './todos';
 import selectedTodo from './selectedTodo';
+import todosStatus from './todosStatus';
 
 const rootReducer = combineReducers({
   todos,
   selectedTodo,
-  todosIsLoading,
-  todosHasErrored,
+  todosStatus,
 });
 
 export default rootReducer;

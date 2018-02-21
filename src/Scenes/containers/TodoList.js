@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Platform, SectionList, Text } from 'react-native';
+import { View, Platform, SectionList, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 
 import { selectTodo, editTodo } from '../../Stores/Redux/actions/index';
-import todosFetchSoloData from '../../Controllers/TodoListController';
-import { CustomActivityIndicator } from '../../Common';
+import { getStarships } from '../../Networking/controllers/StarWarsApi';
 import ItemList from '../presentations/ItemList';
-import Colors from '../../Helpers/Colors';
+import { Colors, TodosLoadingStates } from '../../Helpers';
 import styles from '../styles/TodoList.styles';
 
 const sectionsHeaders = {
@@ -48,7 +47,7 @@ class TodoList extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchData('https://swapi.co/api/starships');
+    this.props.fetchData();
   }
 
   //Navigation handlers
@@ -107,12 +106,12 @@ class TodoList extends Component {
     );
   }
 
+  renderActivityIndicator = () => {
+    return <ActivityIndicator size="large" color={Colors.blueLike} />;
+  }
 
-  render = () => {
+  renderSectionList = () => {
     const { pendingItems, doneItems } = this.props;
-    if (this.props.isLoading) {
-      return <CustomActivityIndicator />;
-    }
     return (
       <SectionList
         sections={[
@@ -125,6 +124,25 @@ class TodoList extends Component {
       />
     );
   }
+
+  renderSelect = () => {
+    switch (this.props.todosStatus) {
+      case TodosLoadingStates.SUCCESFUL:
+        return this.renderSectionList();
+      case TodosLoadingStates.IN_PROGRESS:
+        return this.renderActivityIndicator();
+      default:
+        return this.renderSectionList(); //CHANGE
+    }
+  }
+
+  render = () => {
+    return (
+      <View style={styles.container}>
+        {this.renderSelect()}
+      </View>
+    );
+  }
 }
 
 const getPendingItems = todos => todos.filter(item => item.pending !== false);
@@ -134,13 +152,13 @@ const mapStateToProps = (state) => {
   return {
     pendingItems: getPendingItems(state.todos),
     doneItems: getDoneItems(state.todos),
-    isLoading: state.todosIsLoading,
+    todosStatus: state.todosStatus,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchData: url => dispatch(todosFetchSoloData(url)),
+    fetchData: () => dispatch(getStarships),
     editTodo: todo => dispatch(editTodo(todo)),
     selectTodo: todo => dispatch(selectTodo(todo)),
   };
