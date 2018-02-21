@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Platform, View, Text, TextInput, Switch } from 'react-native';
 import { connect } from 'react-redux';
 
-import { addTodo, editTodo, unselectTodo } from '../../Stores/Redux/actions/index';
-import Colors from '../../Helpers/Colors';
+import { addTodo, editTodo, unselectTodo } from '../../Stores/Redux/actions';
+import { Colors } from '../../Helpers';
 
 const buttonBaseStyle = {
   buttonColor: Colors.white,
