@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
-import { Platform, SectionList, Text } from 'react-native';
+import { View, Platform, SectionList, Text, ActivityIndicator } from 'react-native';
+import { connect } from 'react-redux';
 
-import { TodoStore } from '../Stores';
-import ItemList from './ItemList';
-import Colors from '../Helpers/Colors';
-import styles from './TodoList.styles';
+import { selectTodo, editTodo } from '../../Stores/Redux/actions/index';
+import { getStarships } from '../../Networking/controllers/StarWarsApi';
+import ItemList from '../presentations/ItemList';
+import { Colors, TodosLoadingStates } from '../../Helpers';
+import styles from '../styles/TodoList.styles';
 
 const sectionsHeaders = {
   pendingHeader: 'Pending',
@@ -32,8 +33,7 @@ const tabButtons = {
   ],
 };
 
-@observer
-export default class TodoList extends Component {
+class TodoList extends Component {
   static navigatorStyle = {
     navBarTextColor: Colors.white,
     navBarBackgroundColor: Colors.lightBlue,
@@ -44,6 +44,10 @@ export default class TodoList extends Component {
     super(props);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
     this.props.navigator.setButtons(tabButtons);
+  }
+
+  componentDidMount() {
+    this.props.fetchData();
   }
 
   //Navigation handlers
@@ -73,8 +77,8 @@ export default class TodoList extends Component {
 
   //Store Handlers
 
-  handleSwitch = (item) => {
-    TodoStore.editTodo(item);
+  handleSwitch = (todo) => {
+    this.props.editTodo(todo);
   }
 
   //Render functions
@@ -95,19 +99,23 @@ export default class TodoList extends Component {
           this.handleSwitch(newItem);
         }}
         showEditItem={() => {
-          TodoStore.selectTodo(item);
+          this.props.selectTodo(item);
           this.showEditItem(item);
         }}
       />
     );
   }
 
-  render = () => {
-    const [pendingTodos, doneItems] = [TodoStore.pendingItems, TodoStore.doneItems];
+  renderActivityIndicator = () => {
+    return <ActivityIndicator size="large" color={Colors.blueLike} />;
+  }
+
+  renderSectionList = () => {
+    const { pendingItems, doneItems } = this.props;
     return (
       <SectionList
         sections={[
-          { title: sectionsHeaders.pendingHeader, data: pendingTodos },
+          { title: sectionsHeaders.pendingHeader, data: pendingItems },
           { title: sectionsHeaders.doneHeader, data: doneItems },
         ]}
         renderItem={this.renderItem}
@@ -116,4 +124,47 @@ export default class TodoList extends Component {
       />
     );
   }
+
+  renderSelect = () => {
+    switch (this.props.todosStatus) {
+      case TodosLoadingStates.SUCCESFUL:
+        return this.renderSectionList();
+      case TodosLoadingStates.IN_PROGRESS:
+        return this.renderActivityIndicator();
+      default:
+        return this.renderSectionList(); //CHANGE
+    }
+  }
+
+  render = () => {
+    return (
+      <View style={styles.container}>
+        {this.renderSelect()}
+      </View>
+    );
+  }
 }
+
+const getPendingItems = todos => todos.filter(item => item.pending !== false);
+const getDoneItems = todos => todos.filter(item => item.pending === false);
+
+const mapStateToProps = (state) => {
+  return {
+    pendingItems: getPendingItems(state.todos),
+    doneItems: getDoneItems(state.todos),
+    todosStatus: state.todosStatus,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchData: () => dispatch(getStarships),
+    editTodo: todo => dispatch(editTodo(todo)),
+    selectTodo: todo => dispatch(selectTodo(todo)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(TodoList);
